@@ -8,12 +8,11 @@
 import UIKit
 
 final class AppStoreViewController: BaseViewController {
-    private var sectionKinds: [LayoutSectionKind] = [.gallery, .group3, .group3, .list]
+    private var sections: [Section] = [.gallery, .group3, .group3, .list]
 
     private lazy var collectionViewLayout: UICollectionViewLayout = {
         let layout = UICollectionViewCompositionalLayout { [weak self] sectionIndex, environment -> NSCollectionLayoutSection? in
-            let layoutSection = self?.sectionKinds[sectionIndex].layoutSection()
-            return layoutSection
+            return self?.sections[sectionIndex].layoutSection(for: environment)
         }
         return layout
     }()
@@ -42,64 +41,72 @@ final class AppStoreViewController: BaseViewController {
         collectionView.dataSource = self
         collectionView.delegate = self
 
-        collectionView.register(UICollectionViewCell.self, forCellWithReuseIdentifier: "Cell")
-        collectionView.register(UICollectionReusableView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "Header")
+        collectionView.register(UINib(nibName: .placeholderCell, bundle: nil), forCellWithReuseIdentifier: .placeholderCell)
+        collectionView.register(UINib(nibName: .appStoreGalleryCell, bundle: nil), forCellWithReuseIdentifier: .appStoreGalleryCell)
+        collectionView.register(UICollectionReusableView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: .group3Header)
     }
 }
 
 extension AppStoreViewController {
-    private enum LayoutSectionKind {
+    enum Section {
         case gallery
         case group3
         case list
 
-        private static let itemWidthRatio: CGFloat = 0.97
-        private static let groupWidthRatio: CGFloat = 0.92
-        private static var insetLeadingRatio: CGFloat {
+        private var itemWidthRatio: CGFloat { return 0.97 }
+        private var groupWidthRatio: CGFloat { return 0.92 }
+        private var insetLeadingRatio: CGFloat {
             return 1 - (itemWidthRatio + groupWidthRatio) / 2
         }
-        private static var contentWidthRatio: CGFloat {
+        private var contentWidthRatio: CGFloat {
             return (itemWidthRatio + groupWidthRatio) / 2
         }
 
-        func layoutSection() -> NSCollectionLayoutSection {
-            return buildSection(forGroup: buildGroup())
+        func layoutSection(for environment: NSCollectionLayoutEnvironment) -> NSCollectionLayoutSection {
+            return buildSection(forGroup: buildGroup(), environment: environment)
         }
 
         private func buildGroup() -> NSCollectionLayoutGroup {
             let group: NSCollectionLayoutGroup
             switch self {
             case .gallery:
-                let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(Self.itemWidthRatio), heightDimension: .fractionalHeight(1))
+                let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(itemWidthRatio), heightDimension: .fractionalHeight(1))
                 let item = NSCollectionLayoutItem(layoutSize: itemSize)
-                let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(Self.groupWidthRatio), heightDimension: .absolute(300))
+                let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(groupWidthRatio), heightDimension: .absolute(300))
                 group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
             case .group3:
-                let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(Self.itemWidthRatio), heightDimension: .estimated(100))
+                let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(itemWidthRatio), heightDimension: .estimated(100))
                 let item = NSCollectionLayoutItem(layoutSize: itemSize)
-                let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(Self.groupWidthRatio), heightDimension: .absolute(300))
+                let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(groupWidthRatio), heightDimension: .absolute(300))
                 group = NSCollectionLayoutGroup.vertical(layoutSize: groupSize, subitem: item, count: 3)
                 group.interItemSpacing = .fixed(8)
             case .list:
                 let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .fractionalHeight(1))
                 let item = NSCollectionLayoutItem(layoutSize: itemSize)
-                let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(Self.contentWidthRatio), heightDimension: .absolute(44))
+                let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(contentWidthRatio), heightDimension: .absolute(44))
                 group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
             }
             return group
         }
 
-        private func buildSection(forGroup group: NSCollectionLayoutGroup) -> NSCollectionLayoutSection {
+        private func buildSection(forGroup group: NSCollectionLayoutGroup, environment: NSCollectionLayoutEnvironment) -> NSCollectionLayoutSection {
+            let contentWidth = environment.container.contentSize.width
             let section: NSCollectionLayoutSection
             switch self {
-            case .gallery, .group3:
+            case .gallery:
                 section = NSCollectionLayoutSection(group: group)
                 section.orthogonalScrollingBehavior = .groupPaging
+            case .group3:
+                let headerSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .absolute(40))
+                let headerItem = NSCollectionLayoutBoundarySupplementaryItem(layoutSize: headerSize, elementKind: UICollectionView.elementKindSectionHeader, alignment: .top, absoluteOffset: CGPoint(x: 0, y: 0))
+                section = NSCollectionLayoutSection(group: group)
+                section.orthogonalScrollingBehavior = .groupPaging
+                section.boundarySupplementaryItems = [headerItem]
             case .list:
                 section = NSCollectionLayoutSection(group: group)
                 section.interGroupSpacing = 10
             }
-            section.contentInsets = .init(top: 12, leading: UIScreen.main.bounds.width * Self.insetLeadingRatio, bottom: 0, trailing: 0)
+            section.contentInsets = .init(top: 12, leading: contentWidth * insetLeadingRatio, bottom: 12, trailing: 0)
             return section
         }
     }
@@ -107,7 +114,7 @@ extension AppStoreViewController {
 
 extension AppStoreViewController: UICollectionViewDataSource, UICollectionViewDelegate {
     func numberOfSections(in collectionView: UICollectionView) -> Int {
-        return sectionKinds.count
+        return sections.count
     }
 
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
@@ -115,14 +122,27 @@ extension AppStoreViewController: UICollectionViewDataSource, UICollectionViewDe
     }
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "Cell", for: indexPath)
-        cell.contentView.backgroundColor = .systemTeal
-        return cell
+        let section = sections[indexPath.section]
+        switch section {
+        case .gallery:
+            return collectionView.dequeueReusableCell(withReuseIdentifier: .appStoreGalleryCell, for: indexPath)
+        default:
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: .placeholderCell, for: indexPath) as! PlaceholderCell
+            cell.textLabel.text = "\(indexPath.section), \(indexPath.item)"
+            cell.contentView.backgroundColor = .systemTeal
+            return cell
+        }
     }
 
     func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
-        let headerView = collectionView.dequeueReusableSupplementaryView(ofKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "Header", for: indexPath)
+        let headerView = collectionView.dequeueReusableSupplementaryView(ofKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: .group3Header, for: indexPath)
         headerView.backgroundColor = .cyan
         return headerView
     }
+}
+
+private extension String {
+    static let group3Header = "Group3Header"
+    static let placeholderCell = "PlaceholderCell"
+    static let appStoreGalleryCell = "AppStoreGalleryCell"
 }
