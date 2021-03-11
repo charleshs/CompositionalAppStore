@@ -15,5 +15,7 @@ final class AppStoreGalleryCell: UICollectionViewCell {
     
     override func awakeFromNib() {
         super.awakeFromNib()
+
+        appImageView.layer.cornerRadius = 8
     }
 }

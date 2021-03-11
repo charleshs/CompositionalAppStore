@@ -41,7 +41,7 @@ final class AppStoreViewController: BaseViewController {
 
         collectionView.register(UINib(nibName: .placeholderCell, bundle: nil), forCellWithReuseIdentifier: .placeholderCell)
         collectionView.register(UINib(nibName: .appStoreGalleryCell, bundle: nil), forCellWithReuseIdentifier: .appStoreGalleryCell)
-        collectionView.register(UICollectionReusableView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: .group3Header)
+        collectionView.register(HeaderReusableView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: .group3Header)
     }
 }
 
@@ -62,6 +62,14 @@ extension AppStoreViewController {
             }
         }
 
+        var backgroundColor: UIColor? {
+            switch self {
+            case .gallery: return nil
+            case .group3: return .systemTeal
+            case .list: return .systemGreen
+            }
+        }
+
         private var itemWidthRatio: CGFloat { return 0.97 }
         private var groupWidthRatio: CGFloat { return 0.92 }
     }
@@ -78,20 +86,25 @@ extension AppStoreViewController: UICollectionViewDataSource, UICollectionViewDe
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let section = sections[indexPath.section]
+        let cell: UICollectionViewCell
         switch section {
         case .gallery:
-            return collectionView.dequeueReusableCell(withReuseIdentifier: .appStoreGalleryCell, for: indexPath)
+            let galleryCell = collectionView.dequeueReusableCell(withReuseIdentifier: .appStoreGalleryCell, for: indexPath) as! AppStoreGalleryCell
+            galleryCell.titleLabel.text = "\(indexPath)"
+            cell = galleryCell
         default:
-            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: .placeholderCell, for: indexPath) as! PlaceholderCell
-            cell.textLabel.text = "\(indexPath.section), \(indexPath.item)"
-            cell.contentView.backgroundColor = .systemTeal
-            return cell
+            let placeholderCell = collectionView.dequeueReusableCell(withReuseIdentifier: .placeholderCell, for: indexPath) as! PlaceholderCell
+            placeholderCell.textLabel.text = "\(indexPath)"
+            cell = placeholderCell
         }
+        cell.contentView.backgroundColor = section.backgroundColor
+        return cell
     }
 
     func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
-        let headerView = collectionView.dequeueReusableSupplementaryView(ofKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: .group3Header, for: indexPath)
+        let headerView = collectionView.dequeueReusableSupplementaryView(ofKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: .group3Header, for: indexPath) as! HeaderReusableView
         headerView.backgroundColor = .cyan
+        headerView.text = "Section \(indexPath.section) header"
         return headerView
     }
 }

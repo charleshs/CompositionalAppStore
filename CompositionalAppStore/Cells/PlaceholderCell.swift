@@ -12,5 +12,7 @@ final class PlaceholderCell: UICollectionViewCell {
 
     override func awakeFromNib() {
         super.awakeFromNib()
+
+        contentView.layer.cornerRadius = 8
     }
 }

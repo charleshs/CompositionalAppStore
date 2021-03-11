@@ -11,6 +11,7 @@
 		7C43536D25FA16860062450F /* GalleryPagedSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C43536C25FA16860062450F /* GalleryPagedSection.swift */; };
 		7C43537025FA16A40062450F /* ClusterPagedSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C43536F25FA16A40062450F /* ClusterPagedSection.swift */; };
 		7C43537325FA16B40062450F /* ListSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C43537225FA16B40062450F /* ListSection.swift */; };
+		7C43537B25FA1D2F0062450F /* HeaderReusableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C43537A25FA1D2F0062450F /* HeaderReusableView.swift */; };
 		7C8C768125CD5C4F00727C5A /* PlaceholderCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C8C767F25CD5C4F00727C5A /* PlaceholderCell.swift */; };
 		7C8C768225CD5C4F00727C5A /* PlaceholderCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 7C8C768025CD5C4F00727C5A /* PlaceholderCell.xib */; };
 		7CEDA1C625CD004800A9C416 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CEDA1C525CD004800A9C416 /* AppDelegate.swift */; };
@@ -28,6 +29,7 @@
 		7C43536C25FA16860062450F /* GalleryPagedSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GalleryPagedSection.swift; sourceTree = "<group>"; };
 		7C43536F25FA16A40062450F /* ClusterPagedSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClusterPagedSection.swift; sourceTree = "<group>"; };
 		7C43537225FA16B40062450F /* ListSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListSection.swift; sourceTree = "<group>"; };
+		7C43537A25FA1D2F0062450F /* HeaderReusableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeaderReusableView.swift; sourceTree = "<group>"; };
 		7C8C767F25CD5C4F00727C5A /* PlaceholderCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaceholderCell.swift; sourceTree = "<group>"; };
 		7C8C768025CD5C4F00727C5A /* PlaceholderCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = PlaceholderCell.xib; sourceTree = "<group>"; };
 		7CEDA1C225CD004800A9C416 /* CompositionalAppStore.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CompositionalAppStore.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -103,6 +105,7 @@
 				7CEDA1E725CD355400A9C416 /* AppStoreGalleryCell.xib */,
 				7C8C767F25CD5C4F00727C5A /* PlaceholderCell.swift */,
 				7C8C768025CD5C4F00727C5A /* PlaceholderCell.xib */,
+				7C43537A25FA1D2F0062450F /* HeaderReusableView.swift */,
 			);
 			path = Cells;
 			sourceTree = "<group>";
@@ -181,6 +184,7 @@
 			files = (
 				7CEDA1CA25CD004800A9C416 /* AppStoreViewController.swift in Sources */,
 				7C43536D25FA16860062450F /* GalleryPagedSection.swift in Sources */,
+				7C43537B25FA1D2F0062450F /* HeaderReusableView.swift in Sources */,
 				7CEDA1C625CD004800A9C416 /* AppDelegate.swift in Sources */,
 				7CEDA1E825CD355400A9C416 /* AppStoreGalleryCell.swift in Sources */,
 				7C43536925FA16670062450F /* AppStoreLayoutSection.swift in Sources */,
